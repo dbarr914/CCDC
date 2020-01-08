@@ -35,19 +35,21 @@ echo -e "it will download the predetermined configuration files.\e[0m "
 echo
 echo -e "\e[95mUpdating System..."
 echo -e "This may take some time..."
-sudo yum clean all | tee $(hostname)_install.file
+sudo yum clean all | tee install.file
 echo "..................."
-sudo yum -y update | tee -a $(hostname)_install.file
+sudo yum -y update | tee -a install.file
 echo "[*] Complete."
 echo
+sleep 5
 #                         YUM PACKAGES INSTALL
 # ---------------------------------------------------------------------
 echo "Installing Dependencies..."
 echo
-sudo yum -y install git wget redhat-lsb-core nmap yum-utils lsof epel-release | tee -a $(hostname)_install.file
+sudo yum -y install git wget redhat-lsb-core nmap yum-utils lsof epel-release | tee -a install.file
 echo
 echo -e "[*] Complete.\e[0m"
 echo
+sleep 5
 #                         CONFIG DOWNLOADS
 # ---------------------------------------------------------------------
 
@@ -91,7 +93,7 @@ initial_run(){
  echo
  sudo /opt/splunkforwarder/bin/splunk start --accept-license
  sleep 2
- sudo /opt/splunkforwarder/bin/splunk stop | tee -a *_install.file
+ sudo /opt/splunkforwarder/bin/splunk stop | tee -a install.file
  echo
  echo
  echo "[*] Complete."
@@ -135,7 +137,7 @@ edit_inputs(){
  echo
  echo "[*] Restarting Splunk..."
  echo
- sudo ./splunk restart | tee -a $(hostname)_install.file
+ sudo ./splunk restart | tee -a install.file
  echo
  sudo ./splunk status
  echo "[*] Complete."
@@ -178,10 +180,17 @@ config_osquery(){
 }
 
 download_splunk
+sleep 1
 install_splunk
+sleep 1
 add_user
+sleep 1
 initial_run
+sleep 1
 download_osquery
+sleep 1
 install_osquery
+sleep 1
 config_osquery
+sleep 1
 edit_inputs
