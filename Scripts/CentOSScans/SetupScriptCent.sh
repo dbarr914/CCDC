@@ -22,8 +22,7 @@
 
 read -p "What is the IP Address of the Splunk Indexer? " indexerip
 echo
-read -p "What is the user's home directory where the git repo is stored? " userhome
-echo
+
 #                         INITIAL UPDATE
 # ---------------------------------------------------------------------
 #
