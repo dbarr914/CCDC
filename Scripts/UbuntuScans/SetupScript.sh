@@ -39,8 +39,10 @@ echo
 echo -e "\e[95mUpdating System..."
 echo -e "This may take some time..."
 sudo apt-get update | tee 'install.file'
+sleep 5
 echo "..................."
 sudo apt-get -y upgrade | tee -a 'install.file'
+sleep 5
 echo "[*] Complete."
 echo
 
@@ -50,6 +52,7 @@ echo
 echo "Installing Dependencies..."
 echo
 sudo apt-get install -y lsof nmap clamav debsums fail2ban git | tee -a 'install.file'
+sleep 5
 echo
 echo -e "[*] Complete.\e[0m"
 echo
@@ -197,17 +200,17 @@ config_osquery(){
 }
 
 download_splunk
-sleep 1
+sleep 2
 install_splunk
-sleep 1
+sleep 2
 add_user
-sleep 1
+sleep 2
 initial_run
-sleep 1
+sleep 2
 download_osquery
-sleep 1
+sleep 2
 install_osquery
-sleep 1
+sleep 2
 config_osquery
-sleep 1
+sleep 2
 edit_inputs
