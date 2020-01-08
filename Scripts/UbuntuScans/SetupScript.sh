@@ -22,8 +22,7 @@
 
 read -p "What is the IP Address of the Splunk Indexer? " indexerip
 echo
-read -p "What is the user's home directory where the git repo is stored? " userhome
-echo
+
 #                         INITIAL UPDATE
 # ---------------------------------------------------------------------
 #
@@ -185,10 +184,10 @@ install_osquery(){
 
 config_osquery(){
 
- cp "/home/$userhome/Documents/CCDC/osquery/1.Linux/osquery.conf" /etc/osquery/osquery.conf
- cp "/home/$userhome/Documents/CCDC/osquery/1.Linux/osquery.flags" /etc/osquery/osquery.flags
- cp -rf "/home/$userhome/Documents/CCDC/osquery/1.Linux/packs/" /etc/osquery/
- cp -rf "/home/$userhome/Documents/CCDC/osquery/1.Linux/packs/" /usr/share/osquery/
+ cp "$(pwd)/CCDC/osquery/1.Linux/osquery.conf" /etc/osquery/osquery.conf
+ cp "$(pwd)/CCDC/osquery/1.Linux/osquery.flags" /etc/osquery/osquery.flags
+ cp -rf "$(pwd)/CCDC/osquery/1.Linux/packs/" /etc/osquery/
+ cp -rf "$(pwd)/CCDC/osquery/1.Linux/packs/" /usr/share/osquery/
 
  osqueryctl config-check
  osqueryctl start
