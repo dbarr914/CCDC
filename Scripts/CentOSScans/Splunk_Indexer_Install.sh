@@ -33,19 +33,21 @@ echo -e "the predetermined configuration files.\e[0m "
 echo
 echo -e "\e[95mUpdating System..."
 echo -e "This may take some time..."
-sudo yum clean all | tee $(hostname)_install.file
+sudo yum clean all | tee install.file
 echo "..................."
-sudo yum -y update | tee -a $(hostname)_install.file
+sudo yum -y update | tee -a install.file
 echo "[*] Complete."
 echo
+sleep 5
 #                         YUM PACKAGES INSTALL
 # ---------------------------------------------------------------------
 echo "Installing Dependencies..."
 echo
-sudo yum -y install git wget redhat-lsb-core nmap yum-utils lsof epel-release | tee -a $(hostname)_install.file
+sudo yum -y install git wget redhat-lsb-core nmap yum-utils lsof epel-release | tee -a install.file
 echo
 echo -e "[*] Complete.\e[0m"
 echo
+sleep 5
 #                         CONFIG DOWNLOADS
 # ---------------------------------------------------------------------
 
@@ -281,12 +283,10 @@ install_osquery(){
 
 config_osquery(){
 
- read -p "What is the user's home directory where the git repo is stored? " userhome
-
- cp "/home/$userhome/Documents/CCDC/osquery/1.Linux/osquery.conf" /etc/osquery/osquery.conf
- cp "/home/$userhome/Documents/CCDC/osquery/1.Linux/osquery.flags" /etc/osquery/osquery.flags
- cp -rf "/home/$userhome/Documents/CCDC/osquery/1.Linux/packs/" /etc/osquery/
- cp -rf "/home/$userhome/Documents/CCDC/osquery/1.Linux/packs/" /usr/share/osquery/
+ cp "$(pwd)/CCDC/osquery/1.Linux/osquery.conf" /etc/osquery/osquery.conf
+ cp "$(pwd)/CCDC/osquery/1.Linux/osquery.flags" /etc/osquery/osquery.flags
+ cp -rf "$(pwd)/CCDC/osquery/1.Linux/packs/" /etc/osquery/
+ cp -rf "$(pwd)/CCDC/osquery/1.Linux/packs/" /usr/share/osquery/
 
  osqueryctl config-check
  osqueryctl start
