@@ -152,6 +152,7 @@ edit_inputs(){
  echo "[*] Restarting Splunk..."
  echo
  sudo ./splunk restart | tee -a 'install.file'
+ sleep 5
  echo
  sudo ./splunk status
  echo "[*] Complete."
