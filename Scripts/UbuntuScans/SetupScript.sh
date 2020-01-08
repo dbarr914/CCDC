@@ -36,9 +36,9 @@ echo -e "it will download the predetermined configuration files.\e[0m "
 echo
 echo -e "\e[95mUpdating System..."
 echo -e "This may take some time..."
-sudo apt-get update | tee $(hostname)_install.file
+sudo apt-get update | tee 'install.file'
 echo "..................."
-sudo apt-get -y upgrade | tee -a *install.file
+sudo apt-get -y upgrade | tee -a 'install.file'
 echo "[*] Complete."
 echo
 
@@ -47,7 +47,7 @@ echo
 
 echo "Installing Dependencies..."
 echo
-sudo apt-get install -y lsof nmap clamav debsums fail2ban git | tee -a *install.file
+sudo apt-get install -y lsof nmap clamav debsums fail2ban git | tee -a 'install.file'
 echo
 echo -e "[*] Complete.\e[0m"
 echo
@@ -108,7 +108,7 @@ initial_run(){
  echo
  sudo /opt/splunkforwarder/bin/splunk start --accept-license
  sleep 2
- sudo /opt/splunkforwarder/bin/splunk stop | tee -a *_install.file
+ sudo /opt/splunkforwarder/bin/splunk stop | tee -a 'install.file'
  echo
  echo "[*] Complete."
  echo
@@ -151,7 +151,7 @@ edit_inputs(){
  echo
  echo "[*] Restarting Splunk..."
  echo
- sudo ./splunk restart | tee -a *install.file
+ sudo ./splunk restart | tee -a 'install.file'
  echo
  sudo ./splunk status
  echo "[*] Complete."
@@ -190,14 +190,21 @@ config_osquery(){
  cp -rf "$(pwd)/CCDC/osquery/1.Linux/packs/" /usr/share/osquery/
 
  osqueryctl config-check
- osqueryctl start
+ osqueryctl start --flagfile /etc/osquery/osquery.flags --disable_events=false
 }
 
 download_splunk
+sleep 1
 install_splunk
+sleep 1
 add_user
+sleep 1
 initial_run
+sleep 1
 download_osquery
+sleep 1
 install_osquery
+sleep 1
 config_osquery
+sleep 1
 edit_inputs
