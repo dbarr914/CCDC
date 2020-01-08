@@ -22,7 +22,7 @@
 
 read -p "What is the IP Address of the Splunk Indexer? " indexerip
 echo
-read -p "What is the home directory where the CCDC folder is located? " $userhome
+read -p "What is the home directory where the CCDC folder is located? " userhome
 echo
 
 #                         INITIAL UPDATE
