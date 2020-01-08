@@ -35,9 +35,9 @@ echo -e "it will download the predetermined configuration files.\e[0m "
 echo
 echo -e "\e[95mUpdating System..."
 echo -e "This may take some time..."
-sudo yum clean all | tee install.file
+sudo yum clean all | tee 'install.file'
 echo "..................."
-sudo yum -y update | tee -a install.file
+sudo yum -y update | tee -a 'install.file'
 echo "[*] Complete."
 echo
 sleep 5
@@ -45,7 +45,7 @@ sleep 5
 # ---------------------------------------------------------------------
 echo "Installing Dependencies..."
 echo
-sudo yum -y install git wget redhat-lsb-core nmap yum-utils lsof epel-release | tee -a install.file
+sudo yum -y install git wget redhat-lsb-core nmap yum-utils lsof epel-release | tee -a 'install.file'
 echo
 echo -e "[*] Complete.\e[0m"
 echo
@@ -93,7 +93,7 @@ initial_run(){
  echo
  sudo /opt/splunkforwarder/bin/splunk start --accept-license
  sleep 2
- sudo /opt/splunkforwarder/bin/splunk stop | tee -a install.file
+ sudo /opt/splunkforwarder/bin/splunk stop | tee -a 'install.file'
  echo
  echo
  echo "[*] Complete."
@@ -137,7 +137,7 @@ edit_inputs(){
  echo
  echo "[*] Restarting Splunk..."
  echo
- sudo ./splunk restart | tee -a install.file
+ sudo ./splunk restart | tee -a 'install.file'
  echo
  sudo ./splunk status
  echo "[*] Complete."
@@ -176,7 +176,7 @@ config_osquery(){
  cp -rf "$(pwd)/CCDC/osquery/1.Linux/packs/" /usr/share/osquery/
 
  osqueryctl config-check
- osqueryctl start
+ osqueryctl start --flagfile /etc/osquery/osquery.flags --disable_events=false
 }
 
 download_splunk
