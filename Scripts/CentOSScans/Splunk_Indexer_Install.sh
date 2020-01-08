@@ -103,7 +103,7 @@ download_splunk(){
 
 install_splunk(){
  echo "[*] Installing Splunk....."
- tar -xzvf /tmp/splunk-8.tgz -C /opt | tee -a $(hostname)_install.file
+ tar -xzvf /tmp/splunk-8.tgz -C /opt | tee -a install.file
  echo
  echo "[*] Splunk Enterprise Installed."
  echo
@@ -124,7 +124,7 @@ initial_run(){
  echo "[*] Running initial start....."
  echo
  sudo /opt/splunk/bin/splunk start --accept-license
- sudo /opt/splunk/bin/splunk stop | tee -a $(hostname)_install.file
+ sudo /opt/splunk/bin/splunk stop | tee -a install.file
  echo
  echo "[*] Complete."
  echo
@@ -244,7 +244,7 @@ edit_inputs(){
  echo
  echo "[*] Restarting Splunk..."
  echo
- sudo ./splunk restart | tee -a $(hostname)_install.file
+ sudo ./splunk restart | tee -a install.file
  echo
  sudo ./splunk status
  echo "[*] Complete."
@@ -269,7 +269,7 @@ download_osquery(){
 install_osquery(){
  echo -e "[*] Installing Osquery User Agent....."
  echo
- sudo rpm -i osquery-4.1.1-1.linux.x86_64.rpm | tee -a $(hostname)_install.file
+ sudo rpm -i osquery-4.1.1-1.linux.x86_64.rpm | tee -a install.file
  echo
  echo -e "[*] Osquery Agent Installed.\e[0m"
  echo
