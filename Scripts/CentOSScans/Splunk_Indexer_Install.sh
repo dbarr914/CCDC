@@ -20,7 +20,7 @@
 # Defense Competition. This tool-set represents a larger overall strategy
 # and should be tailored to your specific team.
 
-read -p "What is the home directory where the CCDC folder is located? " $userhome
+read -p "What is the home directory where the CCDC folder is located? " userhome
 echo
 #                         INITIAL UPDATE
 # ---------------------------------------------------------------------
