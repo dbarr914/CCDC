@@ -20,7 +20,8 @@
 # Defense Competition. This tool-set represents a larger overall strategy
 # and should be tailored to your specific team.
 
-
+read -p "What is the home directory where the CCDC folder is located? " $userhome
+echo
 #                         INITIAL UPDATE
 # ---------------------------------------------------------------------
 #
@@ -284,10 +285,10 @@ install_osquery(){
 
 config_osquery(){
 
- cp "$(pwd)/CCDC/osquery/1.Linux/osquery.conf" /etc/osquery/osquery.conf
- cp "$(pwd)/CCDC/osquery/1.Linux/osquery.flags" /etc/osquery/osquery.flags
- cp -rf "$(pwd)/CCDC/osquery/1.Linux/packs/" /etc/osquery/
- cp -rf "$(pwd)/CCDC/osquery/1.Linux/packs/" /usr/share/osquery/
+ cp "/home/$userhome/CCDC/osquery/1.Linux/osquery.conf" /etc/osquery/osquery.conf
+ cp "/home/$userhome/CCDC/osquery/1.Linux/osquery.flags" /etc/osquery/osquery.flags
+ cp -rf "/home/$userhome/CCDC/osquery/1.Linux/packs/" /etc/osquery/
+ cp -rf "/home/$userhome/CCDC/osquery/1.Linux/packs/" /usr/share/osquery/
 
  osqueryctl config-check
  osqueryctl start --flagfile /etc/osquery/osquery.flags --disable_events=false
