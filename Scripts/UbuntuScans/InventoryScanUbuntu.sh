@@ -87,6 +87,14 @@ users(){
   echo -e "\e[93m  Group Memberships by User  "
   echo -e "-----------------------------\e[0m"
   echo
+  echo -e "\e[93m     User Account Status     "
+  echo -e "-----------------------------\e[0m"
+  echo
+  for user in `cat /etc/passwd |awk -F":" '{print $1}'` 
+  do 
+  passwd -S $user;
+  done
+  echo
   echo -e "\e[95m$groupMembership\e[0m"
   echo
   echo -e "\e[93m       Logged In Users       "
