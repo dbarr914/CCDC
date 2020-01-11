@@ -47,7 +47,7 @@ sleep 5
 # ---------------------------------------------------------------------
 echo "Installing Dependencies..."
 echo
-sudo yum -y install git wget redhat-lsb-core nmap yum-utils lsof epel-release | tee -a 'install.file'
+sudo yum -y install git auditd wget redhat-lsb-core nmap yum-utils lsof epel-release | tee -a 'install.file'
 echo
 echo -e "[*] Complete.\e[0m"
 echo
@@ -177,6 +177,7 @@ config_osquery(){
  cp "/home/$userhome/CCDC/osquery/1.Linux/osquery.flags" /etc/osquery/osquery.flags
  cp -rf "/home/$userhome/CCDC/osquery/1.Linux/packs/" /etc/osquery/
  cp -rf "/home/$userhome/CCDC/osquery/1.Linux/packs/" /usr/share/osquery/
+
 
  osqueryctl config-check
  osqueryctl start --flagfile /etc/osquery/osquery.flags --disable_events=false
