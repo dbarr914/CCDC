@@ -2,7 +2,7 @@
 # Bash Install script for Pace CCDC Team Linux Environment
 # Version 1.0.8
 # Written by Daniel Barr
-# 
+#
 # ---------------------------------------------------------------------
 # Free to use by all teams. Please realize you are using this script
 # at your own risk. The author holds no liability and will not be held
@@ -17,23 +17,24 @@
 # Defense Competition. This tool-set represents a larger overall strategy
 # and should be tailored to your specific team.
 
+#                             Go Home
+# ---------------------------------------------------------------------
+cd ~/
 #                            VARIABLES
 # ---------------------------------------------------------------------
 
 read -p "What is the IP Address of the Splunk Indexer? " indexerip
 echo
-read -p "What is the home directory where the CCDC folder is located? " userhome
-echo
 
 #                         INITIAL UPDATE
 # ---------------------------------------------------------------------
 #
-# Install GIT, WGET, NMAP, Fail2Ban, etc. 
+# Install GIT, WGET, NMAP, Fail2Ban, etc.
 
 echo -e "\e[92mDate Run: $(date)"
 echo
 echo -e "This script will install OSQUERY 4.1.1 endpoint visibility agent,"
-echo -e "and Splunk Universal Forwarder and other dependencies. In addition" 
+echo -e "and Splunk Universal Forwarder and other dependencies. In addition"
 echo -e "it will download the predetermined configuration files.\e[0m "
 echo
 echo -e "\e[95mUpdating System..."
@@ -59,8 +60,10 @@ echo
 #                         CONFIG DOWNLOADS
 # ---------------------------------------------------------------------
 
-# cd ~/Documents
-# git clone https://github.com/dbarr914/CCDC.git
+mkdir /tmp/CCDC-Setup/
+cd /tmp/CCDC-Setup/
+git clone https://github.com/dbarr914/CCDC.git
+cd ~/
 
 
 #                           LYNIS INSTALL
@@ -100,12 +103,12 @@ install_splunk(){
 
 add_user(){
  echo "[*] Creating Splunk User....."
- useradd splunk 
+ useradd splunk
  chown -R splunk:splunk /opt/splunkforwarder
  echo
  echo "[*] Splunk User Created."
  echo
-} 
+}
 
 initial_run(){
  echo
@@ -125,7 +128,7 @@ initial_run(){
  echo
 }
 
-#                           EDIT SPLUNK INPUTS 
+#                           EDIT SPLUNK INPUTS
 # ---------------------------------------------------------------------
 
 edit_inputs(){
@@ -137,18 +140,18 @@ edit_inputs(){
  echo -e "[monitor:///var/log/osquery/osqueryd.*ERROR*]\nindex = osquery\nsourcetype = osquery:error\n\n" >> inputs.conf
  echo -e "[monitor:///var/log/osquery/osqueryd.*WARNING*]\nindex = osquery\nsourcetype = osquery:warning\n\n" >> inputs.conf
  echo -e "[monitor:///var/log/osquery/osqueryd.snapshot.log\nindex = osquery\nsourcetype = osquery:snapshots\n\n" >> inputs.conf
- 
+
  echo "[*] Complete."
- echo "[*] Adding directories to monitor..." 
+ echo "[*] Adding directories to monitor..."
  echo
  cd /opt/splunkforwarder/bin/
 
  # sudo ./splunk add monitor /var/log
  # sudo ./splunk add monitor /etc/
- 
+
  echo "[*] Complete."
  echo
- echo "[*] Adding forward-server..." 
+ echo "[*] Adding forward-server..."
  echo
  sudo ./splunk add forward-server "$indexerip":9997
  echo
@@ -190,13 +193,14 @@ install_osquery(){
 
 config_osquery(){
 
- cp "/home/$userhome/CCDC/osquery/1.Linux/osquery.conf" /etc/osquery/osquery.conf
- cp "/home/$userhome/CCDC/osquery/1.Linux/osquery.flags" /etc/osquery/osquery.flags
- cp -rf "/home/$userhome/CCDC/osquery/1.Linux/packs/" /etc/osquery/
- cp -rf "/home/$userhome/CCDC/osquery/1.Linux/packs/" /usr/share/osquery/
+ cp "/tmp/CCDC-Setup/CCDC/osquery/1.Linux/osquery.conf" /etc/osquery/osquery.conf
+ cp "/tmp/CCDC-Setup/CCDC/osquery/1.Linux/osquery.flags" /etc/osquery/osquery.flags
+ cp -rf "/tmp/CCDC-Setup/CCDC/osquery/1.Linux/packs/" /etc/osquery/
+ cp -rf "/tmp/CCDC-Setup/CCDC/osquery/1.Linux/packs/" /usr/share/osquery/
 
  osqueryctl config-check
  osqueryctl start --flagfile /etc/osquery/osquery.flags --disable_events=false
+ rm -r /tmp/CCDC-Setup/
 }
 
 download_splunk
