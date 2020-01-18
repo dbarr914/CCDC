@@ -2,14 +2,14 @@
 # Bash install script for Pace CCDC Team CentOS Splunk Indexer
 # Version 1.2.5
 # Written by Daniel Barr
-# 
+#
 # ---------------------------------------------------------------------
 # Free to use by all teams. Please realize you are using this script
 # at your own risk. The author holds no liability and will not be held
 # responsible for any damages done to systems or system configurations.
 # ---------------------------------------------------------------------
 # This script will install OSQUERY 4.1.1 endpoint visibility agent,
-# and SPLUNK INDEXER and other dependencies. In addition it will download 
+# and SPLUNK INDEXER and other dependencies. In addition it will download
 # the predetermined configuration files.
 # ---------------------------------------------------------------------
 # Take note these configurations may need to be adjusted by the user as
@@ -20,8 +20,10 @@
 # Defense Competition. This tool-set represents a larger overall strategy
 # and should be tailored to your specific team.
 
-read -p "What is the home directory where the CCDC folder is located? " userhome
-echo
+#                             Go Home
+# ---------------------------------------------------------------------
+cd ~/
+
 #                         INITIAL UPDATE
 # ---------------------------------------------------------------------
 #
@@ -29,7 +31,7 @@ echo
 echo -e "\e[92mDate Run: $(date)"
 echo
 echo -e "This script will install OSQUERY 4.1.1 endpoint visibility agent,"
-echo -e "and SPLUNK INDEXER and other dependencies. In addition it will download" 
+echo -e "and SPLUNK INDEXER and other dependencies. In addition it will download"
 echo -e "the predetermined configuration files.\e[0m "
 echo
 echo -e "\e[95mUpdating System..."
@@ -52,14 +54,15 @@ sleep 5
 #                         CONFIG DOWNLOADS
 # ---------------------------------------------------------------------
 
-# cd ~/Documents
-# git clone https://github.com/dbarr914/CCDC.git
+#mkdir /tmp/CCDC-Setup/
+#cd /tmp/CCDC-Setup/
+#git clone https://github.com/dbarr914/CCDC.git
 
 #
 #                         SPLUNK INDEXER INSTALL
 # ---------------------------------------------------------------------
 
-disable_hugh_pages(){ 
+disable_hugh_pages(){
  echo "never" > /sys/kernel/mm/transparent_hugepage/enabled
  echo "never" > /sys/kernel/mm/transparent_hugepage/defrag
  echo "[Unit]" > /etc/systemd/system/disable-thp.service
@@ -113,12 +116,12 @@ install_splunk(){
 
 add_user(){
  echo "[*] Creating Splunk User....."
- useradd splunk 
+ useradd splunk
  chown -R splunk:splunk /opt/splunk
  echo
  echo "[*] Splunk User Created."
  echo
-} 
+}
 
 initial_run(){
  echo
@@ -136,8 +139,8 @@ initial_run(){
  echo "[*] Complete."
  echo
 }
- 
-enable_ssl(){ 
+
+enable_ssl(){
  echo "[*] Enabling SSL....."
  echo
  echo "[settings]" > /opt/splunk/etc/system/local/web.conf
@@ -211,7 +214,7 @@ splunk_check(){
  fi
 }
 
-#                           EDIT SPLUNK INPUTS 
+#                           EDIT SPLUNK INPUTS
 # ---------------------------------------------------------------------
 
 edit_inputs(){
@@ -223,18 +226,18 @@ edit_inputs(){
  echo -e "[monitor:///var/log/osquery/osqueryd.*ERROR*]\nindex = osquery\nsourcetype = osquery:error\n\n" >> inputs.conf
  echo -e "[monitor:///var/log/osquery/osqueryd.*WARNING*]\nindex = osquery\nsourcetype = osquery:warning\n\n" >> inputs.conf
  echo -e "[monitor:///var/log/osquery/osqueryd.snapshot.log\nindex = osquery\nsourcetype = osquery:snapshots\n\n" >> inputs.conf
- 
+
  echo "[*] Complete."
- echo "[*] Adding directories to monitor..." 
+ echo "[*] Adding directories to monitor..."
  echo
  cd /opt/splunk/bin/
 
  # sudo ./splunk add monitor /var/log
  # sudo ./splunk add monitor /etc/
- 
+
  echo "[*] Complete."
  echo
- echo "[*] Adding indexes..." 
+ echo "[*] Adding indexes..."
  echo
  sudo ./splunk add index osquery
  sudo ./splunk add index threathunting
@@ -252,7 +255,7 @@ edit_inputs(){
  echo "[*] Complete."
  echo
 }
- 
+
 
 #                          OSQUERY INSTALL
 # ---------------------------------------------------------------------
@@ -285,16 +288,16 @@ install_osquery(){
 
 config_osquery(){
 
- cp "/home/$userhome/CCDC/osquery/1.Linux/osquery.conf" /etc/osquery/osquery.conf
- cp "/home/$userhome/CCDC/osquery/1.Linux/osquery.flags" /etc/osquery/osquery.flags
- cp -rf "/home/$userhome/CCDC/osquery/1.Linux/packs/" /etc/osquery/
- cp -rf "/home/$userhome/CCDC/osquery/1.Linux/packs/" /usr/share/osquery/
+ cp "/tmp/CCDC-Setup/CCDC/osquery/1.Linux/osquery.conf" /etc/osquery/osquery.conf
+ cp "/tmp/CCDC-Setup/CCDC/osquery/1.Linux/osquery.flags" /etc/osquery/osquery.flags
+ cp -rf "/tmp/CCDC-Setup/CCDC/osquery/1.Linux/packs/" /etc/osquery/
+ cp -rf "/tmp/CCDC-Setup/CCDC/osquery/1.Linux/packs/" /usr/share/osquery/
 
  osqueryctl config-check
  osqueryctl start --flagfile /etc/osquery/osquery.flags --disable_events=false
 }
 
-disable_hugh_pages 
+disable_hugh_pages
 sleep 1
 increase_ulimit
 sleep 1
