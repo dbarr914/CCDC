@@ -248,6 +248,12 @@ edit_inputs(){
  echo
  echo "[*] Complete."
  echo
+ echo "[*] Installing Add-ons..."
+ echo
+ cp "/tmp/CCDC-Setup/CCDC/Splunk/Add-Ons/*" /opt/splunk/etc/deployment-apps/
+ echo
+ echo "[*] Complete."
+ echo
  echo "[*] Restarting Splunk..."
  echo
  sudo ./splunk restart | tee -a 'install.file'
