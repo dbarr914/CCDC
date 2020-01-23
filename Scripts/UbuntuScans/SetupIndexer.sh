@@ -53,7 +53,7 @@ echo
 
 echo "Installing Dependencies..."
 echo
-sudo apt-get install -y lsof nmap clamav debsums fail2ban git | tee -a 'install.file'
+sudo apt-get install -y lsof nmap clamav debsums fail2ban git unzip | tee -a 'install.file'
 sleep 5
 echo
 echo -e "[*] Complete.\e[0m"
@@ -248,12 +248,7 @@ edit_inputs(){
  echo
  echo "[*] Complete."
  echo
- echo "[*] Installing Add-ons..."
- echo
- cp "/tmp/CCDC-Setup/CCDC/Splunk/Add-Ons/*" /opt/splunk/etc/deployment-apps/
- echo
- echo "[*] Complete."
- echo
+
  echo "[*] Restarting Splunk..."
  echo
  sudo ./splunk restart | tee -a 'install.file'
@@ -264,6 +259,76 @@ edit_inputs(){
  echo
 }
 
+deployment_apps(){
+ echo "[*] Installing Add-ons..."
+ echo
+ cp "/tmp/CCDC-Setup/CCDC/Splunk/Add-Ons/*" /opt/splunk/etc/deployment-apps/
+ echo
+ cd /opt/splunk/etc/deployment-apps
+ echo
+ #Sysmon TA
+ unzip TA-microsoft-sysmon-master.zip
+ cp -rf TA-microsoft-sysmon-master /opt/splunk/etc/apps/
+ rm TA-microsoft-sysmon-master.zip
+ 
+ #Osquery TA
+ unzip TA-osquery-master.zip
+ cp -rf TA-osquery-master /opt/splunk/etc/apps
+ rm TA-osquery-master.zip
+ 
+ #Force Direct App
+ tar -xvf force-directed-app-for-splunk_301.tgz
+ cp -rf force_directed_viz /opt/splunk/etc/apps
+ rm force-directed-app-for-splunk_301.tgz
+ 
+ #Link Analysis App
+ tar -xvf link-analysis-app-for-splunk_161.tgz
+ cp -rf link_analysis_app /opt/splunk/etc/apps
+ rm link-analysis-app-for-splunk_161.tgz
+ 
+ #Punchcard App
+ tar -xvf punchcard-custom-visualization_140.tgz
+ cp -rf punchcard_app /opt/splunk/etc/apps
+ rm punchcard-custom-visualization_140.tgz
+ 
+ #Sankey App
+ tar -xvf sankey-diagram-custom-visualization_140.tgz
+ cp -rf sankey_diagram_app /opt/splunk/etc/apps
+ rm sankey-diagram-custom-visualization_140.tgz
+ 
+ #Microsoft App
+ tar -xvf splunk-add-on-for-microsoft-windows_700.tgz
+ cp -rf Splunk_TA_windows /opt/splunk/etc/apps
+ rm splunk-add-on-for-microsoft-windows_700.tgz
+ 
+ #Nginx App
+ tar -xvf splunk-add-on-for-nginx_100.tgz
+ cp -rf Splunk_TA_nginx /opt/splunk/etc/apps
+ rm splunk-add-on-for-nginx_100.tgz
+ 
+ #Zeek App
+ tar -xvf splunk-add-on-for-zeek-aka-bro_400.tgz
+ cp -rf Splunk_TA_bro /opt/splunk/etc/apps
+ rm splunk-add-on-for-zeek-aka-bro_400.tgz
+ 
+ #CIM App
+ tar -xvf splunk-common-information-model-cim_4140.tgz
+ cp -rf Splunk_SA_CIM /opt/splunk/etc/apps
+ rm splunk-common-information-model-cim_4140.tgz
+ 
+ #Threat Hunting App
+ tar -xvf threathunting_141.tgz
+ cp -rf ThreatHunting /opt/splunk/etc/apps
+ rm threathunting_141.tgz
+ 
+ #Timeline App
+ tar -xvf timeline-custom-visualization_140.tgz
+ cp -rf timeline_app /opt/splunk/etc/apps
+ rm timeline-custom-visualization_140.tgz
+ 
+ echo "[*] Complete."
+ echo
+}
 
 #                          OSQUERY INSTALL
 # ---------------------------------------------------------------------
@@ -323,6 +388,7 @@ sleep 1
 #mitigate_privs
 #sleep 1
 edit_inputs
+deployment_apps
 sleep 1
 download_osquery
 sleep 1
