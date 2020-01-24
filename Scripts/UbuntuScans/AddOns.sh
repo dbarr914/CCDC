@@ -82,7 +82,7 @@ lookup_tables(){
    echo
    echo "[*] Copying Lookup tables to appropriate directories..."
    echo
-   cp -rf cd /home/$userhome/CCDC/Splunk/lookups/ /opt/splunk/etc/users/$splunkadmin/ThreatHunting/
+   cp -rf /home/$userhome/CCDC/Splunk/lookups/ /opt/splunk/etc/users/$splunkadmin/ThreatHunting/
    echo "[*] Complete."
    echo
  }
