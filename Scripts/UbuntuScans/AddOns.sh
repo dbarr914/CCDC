@@ -8,7 +8,7 @@ deployment_apps(){
  echo "[*] Installing Add-ons..."
  echo
  cd /tmp/CCDC-Setup/CCDC/Splunk/Add-Ons/
- cp ./* /opt/splunk/etc/deployment-apps/
+ sudo cp ./* /opt/splunk/etc/deployment-apps/
  echo
  cd /opt/splunk/etc/deployment-apps
  echo
