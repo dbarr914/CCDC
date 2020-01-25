@@ -24,8 +24,6 @@ cd ~/
 #                            VARIABLES
 # ---------------------------------------------------------------------
 
-read -p "What is the IP Address of the Splunk Indexer? " indexerip
-echo
 
 #                         INITIAL UPDATE
 # ---------------------------------------------------------------------
@@ -63,8 +61,6 @@ echo
 
 mkdir /tmp/CCDC-Setup/
 cd /tmp/CCDC-Setup/
-git clone https://github.com/dbarr914/CCDC.git
-cd ~/
 
 
 #                           LYNIS INSTALL
@@ -133,7 +129,6 @@ install_splunk(){
  echo
  echo "[*] Splunk Enterprise Installed."
  echo
- rm -f /tmp/splunk-8.tgz
 }
 
 add_user(){
@@ -179,7 +174,6 @@ adjust_inputs(){
 firewall_rules(){
  echo -e "\e[92m[*] Opening Splunk firewall ports....."
  echo
- sudo ufw default deny incoming
  sudo ufw default allow outgoing
  echo "[*] Opening port 8000..."
  echo
@@ -277,7 +271,6 @@ install_osquery(){
  sudo dpkg -i osquery_4.1.1_1.linux.amd64.deb
  echo
  echo -e "\e[93m[*] Osquery Agent Installed.\e[0m"
- rm -f /tmp/osquery_4.1.1_1.linux.amd64.deb
 }
 
 #                    MOVE CONFIGS TO CORRECT LOCATIONS
@@ -292,7 +285,6 @@ config_osquery(){
 
  osqueryctl config-check
  osqueryctl start --flagfile /etc/osquery/osquery.flags --disable_events=false
- rm -r /tmp/CCDC-Setup/
 }
 
 disable_hugh_pages
