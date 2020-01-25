@@ -79,7 +79,6 @@ install_splunk(){
  sudo tar -xzvf /tmp/splunkforwarder-8.tgz -C /opt
  echo
  echo -e "\e[93m[*] Splunk UFW Installed.\e[0m"
- rm -f /tmp/splunkforwarder-8.tgz
 }
 
 add_user(){
@@ -167,7 +166,6 @@ install_osquery(){
  sudo rpm -i osquery-4.1.1-1.linux.x86_64.rpm
  echo
  echo -e "\e[93m[*] Osquery Agent Installed.\e[0m"
- rm -f /tmp/osquery-4.1.1-1.linux.x86_64.rpm
 }
 
 #                    MOVE CONFIGS TO CORRECT LOCATIONS
