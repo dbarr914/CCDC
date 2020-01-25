@@ -58,8 +58,6 @@ sleep 5
 # ---------------------------------------------------------------------
 
 mkdir /tmp/CCDC-Setup/
-cd /tmp/CCDC-Setup/
-git clone https://github.com/dbarr914/CCDC.git
 cd ~/
 
 
@@ -185,7 +183,6 @@ cp -rf "/tmp/CCDC-Setup/CCDC/osquery/1.Linux/packs/" /usr/share/osquery/
 
  osqueryctl config-check
  osqueryctl start --flagfile /etc/osquery/osquery.flags --disable_events=false
- rm -r /tmp/CCDC-Setup/
 }
 
 download_splunk
