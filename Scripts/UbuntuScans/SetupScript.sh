@@ -63,8 +63,6 @@ echo
 
 mkdir /tmp/CCDC-Setup/
 cd /tmp/CCDC-Setup/
-git clone https://github.com/dbarr914/CCDC.git
-cd ~/
 
 
 #                           LYNIS INSTALL
@@ -99,7 +97,6 @@ install_splunk(){
  sudo tar -xzvf /tmp/splunkforwarder-8.tgz -C /opt
  echo
  echo -e "\e[93m[*] Splunk UFW Installed.\e[0m"
- rm -f /tmp/splunkforwarder-8.tgz
 }
 
 add_user(){
@@ -186,7 +183,6 @@ install_osquery(){
  sudo dpkg -i osquery_4.1.1_1.linux.amd64.deb
  echo
  echo -e "\e[93m[*] Osquery Agent Installed.\e[0m"
- rm -f /tmp/osquery_4.1.1_1.linux.amd64.deb
 }
 
 #                    MOVE CONFIGS TO CORRECT LOCATIONS
@@ -201,7 +197,6 @@ config_osquery(){
 
  osqueryctl config-check
  osqueryctl start --flagfile /etc/osquery/osquery.flags --disable_events=false
- rm -r /tmp/CCDC-Setup/
 }
 
 download_splunk
