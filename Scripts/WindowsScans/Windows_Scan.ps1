@@ -1,25 +1,54 @@
 function Invoke-WindowsScan {
+<#
+.SYNOPSIS
+    Overview:
+    
+    Powershell Inventory & IR script for CCDC Team Windows Environments.
+    
+    Parameters:
+     -ScanType          Specifiy the type of scan you would like to run. A brief inventory scan or full incident scan.
+        Options:        Inventory
+                        Incident
+
+     -DestinationEmail  Specify the email you would like to send the report to.
+     
+     -SourceEmail       Specify the email you would like to send the report from.
+    
+                       
+.DESCRIPTION
+	Author: Daniel Barr 
+	Required Dependencies: None
+    Optional Dependencies: None
+    
+    DISCLOSURE:
+    # Free to use by all teams. Please realize you are using this script
+    # at your own risk. The author holds no liability and will not be held
+    # responsible for any damages done to systems or system configurations.
+    # ---------------------------------------------------------------------
+    # Take note these configurations may need to be adjusted by the user as
+    # needed. Every environment is different and should be treated as such.
+    # ---------------------------------------------------------------------
+    # The goal of this to efficiently triage the necessary areas of a possibly
+    # compromised system during the Collegiate Cyber Defense Competition.
+    # This tool-set represents a larger overall strategy and should be tailored
+    #  to your specific team strategy.
+
+.EXAMPLE
+	Run an inventory scan without sending it anywhere. File will exist locally on the system.
+	C:\PS> Invoke-WindowsScan -ScanType Inventory	
+.EXAMPLE
+	Run an inventory scan and send it to <destination@email.com> from <source@email.com>. 
+    C:\PS> Invoke-WindowsScan -ScanType Inventory -DestinationEmail <destination@email.com> -SourceEmail <source@email.com>
+.EXAMPLE
+	Run an incident scan and send it to <destination@email.com> from <source@email.com>. 
+    C:\PS> Invoke-WindowsScan -ScanType Incident -DestinationEmail <destination@email.com> -SourceEmail <source@email.com>
+    
+#>
     param(
         [Parameter(Mandatory=$true)]
         [string] $ScanType,
         [string] $DestinationEmail,
         [string] $SourceEmail)
-# Powershell Inventory & IR script for Pace CCDC Team Windows Environment
-# Version 1.0.0
-# Written by Daniel Barr
-# 
-# --------------------------------------------------------------------
-# Free to use by all teams. Please realize you are using this script
-# at your own risk. The author holds no liability and will not be held
-# responsible for any damages done to systems or system configurations.
-# ---------------------------------------------------------------------
-# Take note these configurations may need to be adjusted by the user as
-# needed. Every environment is different and should be treated as such.
-# ---------------------------------------------------------------------
-# The goal of this to efficiently triage the necessary areas of a possibly
-# compromised system during the Collegiate Cyber Defense Competition.
-# This tool-set represents a larger overall strategy and should be tailored
-#  to your specific team strategy.
 #
 #
 ##################################################################################################################################
