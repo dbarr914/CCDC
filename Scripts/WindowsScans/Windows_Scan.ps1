@@ -1,8 +1,14 @@
+function Invoke-WindowsScan {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string] $ScanType,
+        [string] $DestinationEmail,
+        [string] $SourceEmail)
 # Powershell Inventory & IR script for Pace CCDC Team Windows Environment
 # Version 1.0.0
 # Written by Daniel Barr
 # 
-# ---------------------------------------------------------------------
+# --------------------------------------------------------------------
 # Free to use by all teams. Please realize you are using this script
 # at your own risk. The author holds no liability and will not be held
 # responsible for any damages done to systems or system configurations.
@@ -16,13 +22,12 @@
 #  to your specific team strategy.
 #
 #
-#
 ##################################################################################################################################
 #                             Usage
 # ---------------------------------------------------------------------
 #  From an administrative powershell prompt, run the following:
 #             .\Windows_Scan
-# You will be prompted with the following:
+#  You will be prompted with the following:
 #            cmdlet Start-Script at command pipeline position 1
 #            Supply values for the following parameters:
 #            ScriptType[0]:
@@ -31,23 +36,38 @@
 #            Press ENTER two times
 #
 ##################################################################################################################################
-#                             Global Variables
+#                            GLOBAL VARIABLES
 # ---------------------------------------------------------------------
 
 $global:extensions="*.cmd","*.bat","*.vbs","*.js","*.com","*.exe","*.wsf","*.swf","*.jar","*.dat"
 $global:date=(Get-Date -Format "MM-dd-yyy-h-m-s")
+$global:LocalDirectory=Get-Location
+$global:ReportDirectory="$global:LocalDirectory\$env:COMPUTERNAME-IncidentReports-$global:date"
+$global:FinalReportDirectory="$global:ReportDirectory\$env:COMPUTERNAME-FinalIncidentReport"
 ##################################################################################################################################
-#                             REPORTING
+#                           REPORTING FUNCTIONS
 # ---------------------------------------------------------------------
 # Send report over email using google smtp
-function Send-Report {
-    $From = "paceccdcteam@gmail.com"
-    $To = "paceccdcteam@gmail.com"
-    $Subject = "IR Report"
-    $Attachment = "$env:USERPROFILE\${Env:COMPUTERNAME}-SystemReport.txt"
-    $Body = "<h2>See attached the following incident response report.</h2><br>"
+function Send-IncidentReport([string]$srcemail,[string]$dstemail){
+    $From = $srcemail
+    $To = $dstemail
+    $Subject = "$env:computername Incident Report"
+    $Attachment = "$global:FinalReportDirectory\$env:computername-SystemIncidentReport-$global:date.txt"
+    $Body = "<h2>See attached the following incident response report for $env:computername.</h2><br>"
     $Body += "<p>It contains pertinent information associated to the named computer.</p><br>"
-    $Body += "<p>Please investigate the data further.</p><br>"
+    $Body += "<p>Please investigate the data further.</p>"
+    $SMTPServer = "smtp.gmail.com"
+    $SMTPPort = "587"
+    Send-MailMessage -From $From -to $To -Subject $Subject -Body $Body -BodyAsHtml -SmtpServer $SMTPServer -Port $SMTPPort -UseSsl -Credential (Get-Credential) -Attachments $Attachment
+}
+
+function Send-InventoryReport([string]$srcemail,[string]$dstemail){
+    $From = $srcemail
+    $To = $dstemail
+    $Subject = "$env:computername Inventory Report"
+    $Attachment = "$global:FinalReportDirectory\$env:computername-SystemInventoryReport-$global:date.txt"
+    $Body = "<h2>See attached the following inventory report for $env:computername.</h2><br>"
+    $Body += "<p>It contains pertinent information associated to the named computer.</p>"
     $SMTPServer = "smtp.gmail.com"
     $SMTPPort = "587"
     Send-MailMessage -From $From -to $To -Subject $Subject -Body $Body -BodyAsHtml -SmtpServer $SMTPServer -Port $SMTPPort -UseSsl -Credential (Get-Credential) -Attachments $Attachment
@@ -75,10 +95,9 @@ function Set-ColorBlue
 }
 #
 ##################################################################################################################################
-#                             BASIC INFO
+#                       BASIC INFO FUNCTIONS
 # ---------------------------------------------------------------------
 # Get Generic Overview of system information
-
 function Get-SystemInfo {
     Write-Output '------------------------------------------------------------' | Tee-Object -File "$Env:COMPUTERNAME-SystemInfo.txt" -Append | Set-ColorGreen
     Write-Output '                       SYSTEM REPORT ' | Tee-Object -File "$Env:COMPUTERNAME-SystemInfo.txt" -Append | Set-ColorGreen
@@ -95,7 +114,7 @@ function Get-SystemInfo {
 }
 
 ##################################################################################################################################
-#                        Incident Response Specific
+#                   INCIDENT RESPONSE SPECIFIC FUNCTIONS
 # ---------------------------------------------------------------------
 # Compute MD5 and SHA256 hashes of executable files in %WINDIR%\System32, 
 # %SystemDrive%\Temp\, and all files in %TEMP%
@@ -132,11 +151,11 @@ function Get-SuspiciousFiles {
 }
 
 ##################################################################################################################################
-#                             USER INFO
+#                             USER FUNCTIONS
 # ---------------------------------------------------------------------
 # Get a list of users on the system.
 function Get-Users {
-        $LclUsers = Get-WmiObject -Class Win32_UserAccount -Filter "LocalAccount='True'" | Select-Object PSComputername, Name, Status, Disabled, AccountType, Lockout, PasswordRequired, PasswordChangeable, SID | Format-Table -AutoSize -Wrap
+        $LclUsers = Get-WmiObject -Class Win32_UserAccount -Filter "LocalAccount='True'" | Select-Object Name, Status, Disabled, AccountType, PasswordRequired, PasswordChangeable, SID | Format-Table -AutoSize -Wrap
         $Groups = Get-LocalGroup
         $Results = foreach( $Group in $Groups ){
         $groupname = net localgroup $Group | 
@@ -178,7 +197,7 @@ function Get-UserDirectories {
 
 #
 ##################################################################################################################################
-#                         PROCESS INFORMATION
+#                  PROCESS INFORMATION FUNCTIONS
 # ---------------------------------------------------------------------
 # List all loaded dlls
 #
@@ -291,7 +310,7 @@ function Get-InstalledServices {
 }
 
 ##################################################################################################################################
-#                         NETWORKING INFORMATION
+#                 NETWORKING INFORMATION FUNCTIONS
 # ---------------------------------------------------------------------
 # Basic Network information.
 function Get-BasicNetworking {
@@ -306,7 +325,7 @@ function Get-RoutingTable {
     Write-Output '[*] Route Table  ' | Tee-Object -File "$Env:COMPUTERNAME-NetworkingReport.txt" -Append | Set-ColorBlue
     Write-Output '--------------------------' | Tee-Object -File "$Env:COMPUTERNAME-NetworkingReport.txt" -Append | Set-ColorBlue
     Write-Output "" | Tee-Object -File "$Env:COMPUTERNAME-NetworkingReport.txt" -Append | Set-ColorWhite
-    Get-WmiObject win32_networkadapterconfiguration | Format-Table -Property Caption,IPAddress,MACAddress -AutoSize -Wrap| Tee-Object -File "$Env:COMPUTERNAME-NetworkingReport.txt" -Append | Set-ColorWhite  
+    Get-WmiObject win32_networkadapterconfiguration | Format-Table -Property Caption,IPAddress,MACAddress -Wrap| Tee-Object -File "$Env:COMPUTERNAME-NetworkingReport.txt" -Append | Set-ColorWhite  
     Write-Output "" | Tee-Object -File "$Env:COMPUTERNAME-NetworkingReport.txt" -Append | Set-ColorWhite
 }
 
@@ -315,7 +334,7 @@ function Get-OpenPorts {
     Write-Output '[*] Open Ports  ' | Tee-Object -File "$Env:COMPUTERNAME-NetworkingReport.txt" -Append | Set-ColorBlue
     Write-Output '--------------------------' | Tee-Object -File "$Env:COMPUTERNAME-NetworkingReport.txt" -Append | Set-ColorBlue
     Write-Output "" | Tee-Object -File "$Env:COMPUTERNAME-NetworkingReport.txt" -Append | Set-ColorWhite
-    Get-NetTCPConnection | Sort-Object -Property State,RemoteAddress |Format-Table -AutoSize -Wrap | Tee-Object -File "$Env:COMPUTERNAME-NetworkingReport.txt" -Append | Set-ColorBlue
+    Get-NetTCPConnection | Sort-Object -Property State,RemoteAddress |Format-Table -Property LocalAddress,LocalPort,RemoteAddress,RemotePort,State,OwningProcess -AutoSize -Wrap | Tee-Object -File "$Env:COMPUTERNAME-NetworkingReport.txt" -Append | Set-ColorWhite
     Write-Output "" | Tee-Object -File "$Env:COMPUTERNAME-NetworkingReport.txt" -Append | Set-ColorWhite
 }
 
@@ -408,79 +427,66 @@ function Start-IR {
     Get-FirewallRules 
 }
 
-function Get-IRReports {
-    Get-Content $ReportDirectory\$env:computername-SystemInfo.txt,$env:computername-UserReport.txt,$env:computername-NetworkingReport.txt,
-    $env:computername-FirewallReport.txt,$env:computername-InstalledServicesReport.txt,$Env:COMPUTERNAME-TasklistReport.txt,$env:computername-InstalledSoftwareReport.txt,
-    $env:computername-InstalledDriversReport.txt,$env:computername-LoadedDllsReport.txt,$env:computername-StartupItemsReport.txt,
-    $env:computername-ScheduledTasksReport.txt,$env:computername-RemoteProcessesReport.txt,$Env:COMPUTERNAME-SuspiciousFiles.txt,
-    $Env:COMPUTERNAME-MD5SystemHashes.txt,$Env:COMPUTERNAME-SHA256SystemHashes.txt | Add-Content \"$env:computername-SystemIncidentReport-$global:date.txt"
-    }
-
-
 function Start-InventoryReport {
-    $LocalDirectory=Get-Location
-    $ReportDirectory="$LocalDirectory\$env:COMPUTERNAME-InventoryReports-$global:date"
-    $FinalReportDirectory="$ReportDirectory\$env:COMPUTERNAME-FinalInventoryReports"
-    if (-not (Test-Path -LiteralPath $ReportDirectory)) {
+    $global:LocalDirectory=Get-Location
+    $global:ReportDirectory="$global:LocalDirectory\$env:COMPUTERNAME-InventoryReports-$global:date"
+    $global:FinalReportDirectory="$global:ReportDirectory\$env:COMPUTERNAME-FinalInventoryReports"
+    if (-not (Test-Path -LiteralPath $global:ReportDirectory)) {
         try {
-            New-Item -Path "$ReportDirectory" -ItemType Directory -ErrorAction Stop | Out-Null #-Force
-            mkdir "$FinalReportDirectory"
-            Move-Item  -Path "$LocalDirectory\$env:COMPUTERNAME-*" -Destination $ReportDirectory -Exclude "*-InventoryReports-*","*-IncidentReports-*" -ErrorAction SilentlyContinue
+            New-Item -Path "$global:ReportDirectory" -ItemType Directory -ErrorAction Stop | Out-Null #-Force
+            mkdir "$global:FinalReportDirectory"
+            Move-Item  -Path "$global:LocalDirectory\$env:COMPUTERNAME-*" -Destination $global:ReportDirectory -Exclude "*-InventoryReports-*","*-IncidentReports-*" -ErrorAction SilentlyContinue
         function Get-InventoryReports {
-            Get-Content "$ReportDirectory\$env:computername-SystemInfo.txt","$ReportDirectory\$env:computername-UserReport.txt","$ReportDirectory\$env:computername-NetworkingReport.txt",
-            "$ReportDirectory\$env:computername-FirewallReport.txt","$ReportDirectory\$env:computername-InstalledServicesReport.txt",
-            "$ReportDirectory\$env:computername-InstalledSoftwareReport.txt" | Add-Content $FinalReportDirectory\"$env:computername-SystemInventoryReport-$global:date.txt"
+            Get-Content "$global:ReportDirectory\$env:computername-SystemInfo.txt","$global:ReportDirectory\$env:computername-UserReport.txt","$global:ReportDirectory\$env:computername-NetworkingReport.txt",
+            "$global:ReportDirectory\$env:computername-FirewallReport.txt","$global:ReportDirectory\$env:computername-InstalledServicesReport.txt",
+            "$global:ReportDirectory\$env:computername-InstalledSoftwareReport.txt" | Add-Content $global:FinalReportDirectory\"$env:computername-SystemInventoryReport-$global:date.txt"
         }
         Get-InventoryReports
         }
         catch {
-            Write-Error -Message "Unable to create directory '$ReportDirectory'. Error was: $_" -ErrorAction Stop
+            Write-Error -Message "Unable to create directory '$global:ReportDirectory'. Error was: $_" -ErrorAction Stop
         }
     }
 }
 
 function Start-IncidentReport {
-    $LocalDirectory=Get-Location
-    $ReportDirectory="$LocalDirectory\$env:COMPUTERNAME-IncidentReports-$global:date"
-    $FinalReportDirectory="$ReportDirectory\$env:COMPUTERNAME-FinalIncidentReport"
-    if (-not (Test-Path -LiteralPath $ReportDirectory)) {
+    $global:LocalDirectory=Get-Location
+    $global:ReportDirectory="$global:LocalDirectory\$env:COMPUTERNAME-IncidentReports-$global:date"
+    $global:FinalReportDirectory="$global:ReportDirectory\$env:COMPUTERNAME-FinalIncidentReport"
+    if (-not (Test-Path -LiteralPath $global:ReportDirectory)) {
         try {
-            New-Item -Path "$ReportDirectory" -ItemType Directory -ErrorAction Stop | Out-Null #-Force
-            mkdir "$FinalReportDirectory"
-            Move-Item  -Path "$LocalDirectory\$env:COMPUTERNAME-*" -Destination $ReportDirectory -Exclude "*-IncidentReports-*" -ErrorAction SilentlyContinue
+            New-Item -Path "$global:ReportDirectory" -ItemType Directory -ErrorAction Stop | Out-Null #-Force
+            mkdir "$global:FinalReportDirectory"
+            Move-Item  -Path "$global:LocalDirectory\$env:COMPUTERNAME-*" -Destination $global:ReportDirectory -Exclude "*-IncidentReports-*" -ErrorAction SilentlyContinue
             function Get-IRReports {
-                Get-Content "$ReportDirectory\$env:computername-SystemInfo.txt","$ReportDirectory\$env:computername-UserReport.txt","$ReportDirectory\$env:computername-NetworkingReport.txt",
-                "$ReportDirectory\$env:computername-FirewallReport.txt","$ReportDirectory\$env:computername-InstalledServicesReport.txt","$ReportDirectory\$env:computername-TasklistReport.txt",
-                "$ReportDirectory\$env:computername-InstalledSoftwareReport.txt","$ReportDirectory\$env:computername-InstalledDriversReport.txt","$ReportDirectory\$env:computername-LoadedDllsReport.txt",
-                "$ReportDirectory\$env:computername-StartupItemsReport.txt","$ReportDirectory\$env:computername-ScheduledTasksReport.txt",
-                "$ReportDirectory\$env:computername-RemoteProcessesReport.txt","$ReportDirectory\$env:computername-SuspiciousFiles.txt",
-                "$ReportDirectory\$env:computername-MD5SystemHashes.txt","$ReportDirectory\$env:computername-SHA256SystemHashes.txt" | Add-Content "$FinalReportDirectory\$env:computername-SystemIncidentReport-$global:date.txt"
+                Get-Content "$global:ReportDirectory\$env:computername-SystemInfo.txt","$global:ReportDirectory\$env:computername-UserReport.txt","$global:ReportDirectory\$env:computername-NetworkingReport.txt",
+                "$global:ReportDirectory\$env:computername-FirewallReport.txt","$global:ReportDirectory\$env:computername-InstalledServicesReport.txt","$global:ReportDirectory\$env:computername-TasklistReport.txt",
+                "$global:ReportDirectory\$env:computername-InstalledSoftwareReport.txt","$global:ReportDirectory\$env:computername-InstalledDriversReport.txt","$global:ReportDirectory\$env:computername-LoadedDllsReport.txt",
+                "$global:ReportDirectory\$env:computername-StartupItemsReport.txt","$global:ReportDirectory\$env:computername-ScheduledTasksReport.txt",
+                "$global:ReportDirectory\$env:computername-RemoteProcessesReport.txt","$global:ReportDirectory\$env:computername-SuspiciousFiles.txt",
+                "$global:ReportDirectory\$env:computername-MD5SystemHashes.txt","$global:ReportDirectory\$env:computername-SHA256SystemHashes.txt" | Add-Content "$global:FinalReportDirectory\$env:computername-SystemIncidentReport-$global:date.txt"
                 }
         Get-IRReports
         }
         catch {
-            Write-Error -Message "Unable to create directory '$ReportDirectory'. Error was: $_" -ErrorAction Stop
+            Write-Error -Message "Unable to create directory '$global:ReportDirectory'. Error was: $_" -ErrorAction Stop
         }
     }
 }
 
 
-function Start-Script {
-    param(
-        [Parameter(Mandatory=$true)]
-        [String[]] $ScriptType)
-        
-        if ($ScriptType -eq "Inventory") {
+        if ($ScanType -eq "Inventory") {
             Start-Inventory
             Start-InventoryReport
+            if ($DestinationEmail -ne $null) {
+                Send-InventoryReport $SourceEmail $DestinationEmail
+            }
         }
-        elseif ($ScriptType -eq "Incident") {
+        elseif ($ScanType -eq "Incident") {
             Start-IR
             Start-IncidentReport
-        }
-        else {
-            Write-Host 
+            if ($DestinationEmail -ne $null) {
+            Send-IncidentReport $SourceEmail $DestinationEmail
+            }
         }
 }
-
-Start-Script
