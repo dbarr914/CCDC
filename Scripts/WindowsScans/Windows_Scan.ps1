@@ -52,19 +52,6 @@ function Invoke-WindowsScan {
 #
 #
 ##################################################################################################################################
-#                             Usage
-# ---------------------------------------------------------------------
-#  From an administrative powershell prompt, run the following:
-#             .\Windows_Scan
-#  You will be prompted with the following:
-#            cmdlet Start-Script at command pipeline position 1
-#            Supply values for the following parameters:
-#            ScriptType[0]:
-#
-#            Type either Inventory or Incident
-#            Press ENTER two times
-#
-##################################################################################################################################
 #                            GLOBAL VARIABLES
 # ---------------------------------------------------------------------
 
