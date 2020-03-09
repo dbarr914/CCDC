@@ -9,16 +9,16 @@
 # -      Global  Variables      -
 # -------------------------------
 
-< Place global Variables here >
-
 
 # -------------------------------
 # -          Functions          -
 # -------------------------------
 
-< Place script Functions here >
 
-# Main body of script starts here
+# -------------------------------
+# -        Script Start         -
+# -------------------------------
+ 
 #
 #
 # < Replace with the main commands
