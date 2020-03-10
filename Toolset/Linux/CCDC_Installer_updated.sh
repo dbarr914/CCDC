@@ -577,8 +577,9 @@ fi
 
 while [ $# -ne 0 ]
 do
-    arg="$1"
-    case "$arg" in
+ARGARRAY=( "$@" )
+for ARG in "${ARGARRAY[@]}"; do
+    case "$ARG" in
         --[uU]buntu)
             ubuntu=true
             ;;
@@ -611,6 +612,7 @@ do
             ;;
     esac
     shift
+    done
 done
 
 if [ "$help" = "true" ];
@@ -649,14 +651,17 @@ then
     echo -e "sudo ./CCDC_Installer --centos --osquery${NC}"  
     echo "==========================================================================================="
 fi
+
 if [ "$check_forwarder" = "true" ];
         then
         splunk_forwarder_check
 fi
+
 if [ "$check_indexer" = "true" ];
         then
         splunk_indexer_check
 fi
+
 if [ "$ssl_indexer" = "true" ];
 then
         enable_ssl_indexer
@@ -675,9 +680,10 @@ then
             sleep 5
             echo
             echo -e "${RED}[!] Update not successful.${NC}"
-
         fi
-    elif [ "$indexer" = 'true' ];
+    fi
+    
+    if [ "$indexer" = 'true' ];
     then
     #If --indexer is an argument, then it will install the indexer based on the system
         disable_hugh_pages_indexer
@@ -703,7 +709,9 @@ then
             sleep 5
             echo -e "${RED}[!] Inputs update not successful.${NC}"
         fi
-    elif [ "$forwarder" = "true" ];
+    fi
+    
+    if [ "$forwarder" = "true" ];
     then
             install_splunk_forwarder
             sleep 2
@@ -720,7 +728,9 @@ then
             sleep 5
             echo -e "${RED}[!] Inputs update not successful.${NC}"
         fi
-    elif [ "$osquery" = "true" ];
+    fi
+
+    if [ "$osquery" = "true" ];
     then
         install_osquery_deb
         sleep 1
@@ -750,7 +760,9 @@ then
             echo -e "${RED}[!] Update not successful.${NC}"
 
         fi
-    elif [ "$indexer" = 'true' ];
+    fi
+    
+    if [ "$indexer" = 'true' ];
     then
     #If --indexer is an argument, then it will install the indexer based on the system
         disable_hugh_pages_indexer
@@ -776,7 +788,9 @@ then
             sleep 5
             echo -e "${RED}[!] Inputs update not successful.${NC}"
         fi
-    elif [ "$forwarder" = "true" ];
+    fi
+    
+    if [ "$forwarder" = "true" ];
     then
             install_splunk_forwarder
             sleep 2
@@ -793,7 +807,9 @@ then
             sleep 5
             echo -e "${RED}[!] Inputs update not successful.${NC}"
         fi
-    elif [ "$osquery" = "true" ];
+    fi
+    
+    if [ "$osquery" = "true" ];
     then
         install_osquery_rpm
         sleep 1
@@ -806,7 +822,7 @@ then
             sleep 5
             echo -e "${RED}[!] Osquery Install not successful.${NC}"
         fi
-    fi
+     fi
 fi
 # Exit with an explicit status code
 exit 0
