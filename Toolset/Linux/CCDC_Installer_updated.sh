@@ -55,8 +55,8 @@ dependency_install_deb(){
  echo -e "${BLUE}Updating System...${NC}"
  echo -e "${BLUE}This may take some time...${NC}"
  echo
- sudo apt-get update
- sudo apt-get upgrade
+ sudo apt-get update -y
+ sudo apt-get upgrade -y
  echo
  if [ "$?" -eq "0" ]
  then
@@ -87,14 +87,15 @@ dependency_install_deb(){
 # Downloads and Installs the necessary dependencies on Red-Hat based systems, then upgrades the system.
 dependency_install_rpm(){
  echo -e "${GREEN}[*] Cleaning up repo cache...${NC}"
- sudo yum clean all | tee 'install.file'
+ sudo yum clean all
  echo
  echo -e "${YELLOW}[*] Complete.${NC}"
  echo
  echo -e "${GREEN}[*] Installing Dependencies...${NC}"
  echo
- sudo yum -y install git auditd wget redhat-lsb-core nmap yum-utils lsof epel-release | tee -a 'install.file'
+ sudo yum -y install wget redhat-lsb-core nmap yum-utils lsof epel-release
  sleep 5
+ sudo dnf install git -y
  echo
  echo -e "${YELLOW}[*] Complete.${NC}"
  echo
@@ -284,16 +285,16 @@ splunk_indexer_check(){
  if [[ -f /opt/splunk/bin/splunk ]]
          then
                 echo -e "${GREEN}"
-                echo "Splunk Enterprise $(cat /opt/splunk/etc/splunk.version | head -1) has been installed, configured, and started!"
+                echo "Splunk Enterprise $(cat /opt/splunk/etc/splunk.version | head -1) is installed!"
                 echo
-                echo "Visit the Splunk server using https://hostNameORip:8000 as mentioned above."
+                echo "Visit the Splunk server using https://hostNameORip:8000."
                 echo
                 echo "                        HAPPY SPLUNKING!!!"
                 echo
                 echo -e "${NC}"
          else
                 echo
-                echo -e "${RED}[!]Splunk Enterprise has FAILED install!${NC}"
+                echo -e "${RED}[!]Splunk Enterprise is NOT installed!${NC}"
                 echo
  fi
 }
@@ -315,6 +316,7 @@ splunk_forwarder_check(){
                 echo
  fi
 }
+
 #         Firewall Rules
 # -------------------------------
 
@@ -618,9 +620,11 @@ done
 if [ "$help" = "true" ];
 then
     echo
+    echo "==========================================================================================="
+    echo
     echo -e "${GREEN}Usage:"
     echo "sudo ./CCDC_Installer [options]"
-    echo "sudo ./CCDC_Installer [operating_system][os_option]${NC}"
+    echo -e "sudo ./CCDC_Installer [operating_system][os_option]${NC}"
     echo
     echo "The purpose of this program is to configure your toolset and install"
     echo "the necessary software.  The script accepts one operating system argument,"
@@ -647,8 +651,9 @@ then
     echo -e "${GREEN}Examples:"
     echo "sudo ./CCDC_Installer --help"
     echo "sudo ./CCDC_Installer --check_indexer"
-    echo -e "sudo ./CCDC_Installer --ubuntu --indexer${NC}"
-    echo -e "sudo ./CCDC_Installer --centos --osquery${NC}"  
+    echo -e "sudo ./CCDC_Installer --ubuntu --indexer"
+    echo -e "sudo ./CCDC_Installer --centos --osquery${NC}"
+    echo
     echo "==========================================================================================="
 fi
 
